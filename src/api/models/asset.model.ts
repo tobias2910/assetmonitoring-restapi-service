@@ -1,5 +1,11 @@
-import { prop } from '@typegoose/typegoose';
+import { modelOptions, prop } from '@typegoose/typegoose';
+import configData from '../config/config';
 
+@modelOptions({
+    schemaOptions: {
+        collection: configData.mongoDB.assetCollection
+    }
+})
 export default class Asset {
     @prop({
             required: true, 

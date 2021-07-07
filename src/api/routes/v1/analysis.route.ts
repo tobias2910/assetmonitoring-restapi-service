@@ -2,7 +2,6 @@ import { Router } from "express";
 import { validateQueryMiddleware } from "../../middleware/validationMiddleware";
 import Analysis from "../../validations/analysis.validation";
 import AnalysisController from "../../controllers/analysis.controller";
-import { generalLimiter } from "../../config/rateLimiter";
 
 export default class AnalysisRoute {
     private router: Router;

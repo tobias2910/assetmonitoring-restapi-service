@@ -1,8 +1,9 @@
 import { modelOptions, prop } from '@typegoose/typegoose';
+import configData from '../config/config';
 
 @modelOptions({
     schemaOptions: {
-        collection: 'assetAnalytics'
+        collection: configData.mongoDB.analysisCollection
     }
 })
 export default class Analytic {

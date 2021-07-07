@@ -1,8 +1,15 @@
 FROM node:12.18-alpine
-ENV NODE_ENV=production
-WORKDIR /usr/src/app
-COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
-RUN npm install --production --silent && mv node_modules ../
+ENV NODE_ENV=prod
+ENV MONGODB_URL=167.172.185.146:27017
+ENV MONGODB_USERNAME=tobiasc
+ENV MONGODB_PASSWORD=doskova
+ENV MONGODB_DATABASE=assetIdentifier
+ENV MONGODB_ASSET_COLLECTION=assetInformation
+ENV MONGODB_ANALYTIC_COLLECTION=assetAnalytics
+ENV RATE_LIMITER=15
+WORKDIR /usr/app/
+COPY "package.json" ./
+RUN npm install
 COPY . .
-EXPOSE 3000
-CMD ["node", "index.js"]
+EXPOSE 3100
+CMD ["node", "dist/index.js"]

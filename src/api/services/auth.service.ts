@@ -4,7 +4,7 @@ import { getModelForClass } from "@typegoose/typegoose";
 import TokenService from '../services/token.service'
 import User from "../models/user.model";
 import HttpException from "../utils/httpException";
-import { JWTToken } from '../types/token';
+import { JWTToken } from '../typings/token';
 
 class AuthService {
 

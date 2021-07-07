@@ -1,10 +1,10 @@
 import { getModelForClass } from '@typegoose/typegoose';
 import Analytic from '../models/analytic.model';
-import { GeneralInformation } from '../types/analysis';
+import { AssetInformation } from '../typings/asset';
 
 class AnalysisService {
 
-    public async getGeneralData (query: GeneralInformation, numberRecords?: number) {
+    public async getGeneralData (query: AssetInformation, numberRecords?: number) {
         const AnalysisModel = getModelForClass(Analytic);
 
         let records = await AnalysisModel.find(query).limit(numberRecords);
@@ -24,7 +24,7 @@ class AnalysisService {
      * @param query 
      * @returns 
      */
-    public async getAggregatedDate (query: GeneralInformation) {
+    public async getAggregatedDate (query: AssetInformation) {
         const AnalysisModel = getModelForClass(Analytic);
         
         let records = await AnalysisModel.aggregate([

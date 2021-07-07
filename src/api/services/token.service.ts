@@ -7,7 +7,7 @@ import { ObjectId } from "mongodb";
 import { tokenTypes } from '../config/tokens';
 import  Token from '../models/token.model';
 import UserService from '../services/user.service';
-import { JWTToken } from '../types/token'
+import { JWTToken } from '../typings/token'
 import HttpException from '../utils/httpException';
 
 class TokenService {

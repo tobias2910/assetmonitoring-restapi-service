@@ -1,7 +1,8 @@
 import { IsString, 
          IsEnum, 
          IsOptional, 
-         IsNumber } from "class-validator";
+         IsNumber, 
+         Matches} from "class-validator";
 
 enum AssetType {
     Crypto = 'Crypto',
@@ -40,4 +41,12 @@ export default class Analysis {
     @IsNumber({allowInfinity: false, maxDecimalPlaces: 0}, {message: `Property 'numberRecords' is not a number.`})
     @IsOptional()
     public numberRecords: number;
+
+    @Matches(/^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$/, {message: `Property 'endDate' is not a date. Please provide a date in format 'dd.mm.yyyy'`})
+    @IsOptional()
+    public endDate: Date;
+
+    @Matches(/^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$/, {message: `Property 'startDate' is not a date. Please provide a date in format 'dd.mm.yyyy'`})
+    @IsOptional()
+    public startDate: Date;
 }
