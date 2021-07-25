@@ -3,6 +3,7 @@ import httpStatus from 'http-status';
 import moment from "moment";
 import analysisService from "../services/analysis.service";
 import { AssetInformation } from "../typings/asset";
+import Redis from '../config/redis';
 
 export default class AnalysisController {
 
@@ -19,8 +20,15 @@ export default class AnalysisController {
 
             Object.keys(query).forEach((key) => query[key] === undefined && delete query[key]);
 
-            const records = await analysisService.getGeneralData(query, parseInt(<string> req.query.numberRecords));
-            res.status(httpStatus.OK).header('X-Total-Count', records.length).json({length: records.length, records: records});
+            const redisCacheKey = `analysis_query_${JSON.stringify(query)}`;
+            let records = await Redis.getResult(redisCacheKey);
+
+            if (!records) {
+                records = await analysisService.getGeneralData(query, parseInt(<string> req.query.numberRecords));
+                await Redis.saveResultWithTtl(redisCacheKey, JSON.stringify(records));    
+            }
+
+            res.status(httpStatus.OK).header('X-Total-Count', records.length).json(records);
         } catch (error) {
             next(error);
         }
@@ -62,8 +70,15 @@ export default class AnalysisController {
 
             Object.keys(query).forEach((key) => query[key] === undefined && delete query[key]);
 
-            const records = await analysisService.getAggregatedDate(query);
-            res.status(httpStatus.OK).header('X-Total-Count', records.length).json({length: records.length, records: records});
+            const redisCacheKey = `aggregated_analysis_query_${JSON.stringify(query)}`;
+            let records = await Redis.getResult(redisCacheKey);
+
+            if (!records) {
+                records = await analysisService.getAggregatedDate(query);
+                await Redis.saveResultWithTtl(redisCacheKey, JSON.stringify(records));    
+            }
+
+            res.status(httpStatus.OK).header('X-Total-Count', records.length).json(records);
         } catch (error) {
             next(error);
         }

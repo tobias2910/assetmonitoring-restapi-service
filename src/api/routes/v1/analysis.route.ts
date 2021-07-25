@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validateQueryMiddleware } from "../../middleware/validationMiddleware";
-import Analysis from "../../validations/analysis.validation";
+import { Analysis } from "../../validations/analysis.validation";
 import AnalysisController from "../../controllers/analysis.controller";
 
 export default class AnalysisRoute {

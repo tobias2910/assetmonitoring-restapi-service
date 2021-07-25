@@ -4,6 +4,12 @@ import { AssetInformation } from '../typings/asset';
 
 class AssetService {
 
+    /**
+     * 
+     * @param query 
+     * @param numberRecords 
+     * @returns 
+     */
     public async getAssetData (query: AssetInformation, numberRecords?: number) {
         const AssetModel = getModelForClass(Asset);
         if (!numberRecords) {
@@ -21,10 +27,39 @@ class AssetService {
         return records;
     }
 
+    /**
+     * 
+     * @param assetName 
+     * @param updateBody 
+     * @returns 
+     */
     public async updateAssetData (assetName: string, updateBody: AssetInformation) {
         const AssetModel = getModelForClass(Asset);
 
-        const result = await AssetModel.update({Symbol: assetName}, {$set: updateBody});
+        const result = await AssetModel.updateOne({Symbol: assetName}, {$set: updateBody});
+
+        return result;
+    }
+
+    /**
+     * 
+     * @param assetBody 
+     * @returns 
+     */
+    public async createAsset (assetBody: AssetInformation) {
+        const AssetModel = getModelForClass(Asset);
+
+        const asset = await AssetModel.findOne({Symbol: assetBody.Symbol, AssetType: assetBody.AssetType});
+        if (asset) {
+            throw new Error (`Asset '${assetBody.Symbol}' as Type ${assetBody.AssetType} already available in the database.`);
+        }
+
+        let result = await AssetModel.create(assetBody);
+
+        if (result) {
+                delete result._doc._id;
+                delete result._doc.__v;
+        }
 
         return result;
     }

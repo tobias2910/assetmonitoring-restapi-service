@@ -15,12 +15,14 @@ enum Platform {
     Twitter = 'Twitter'
 }
 
-export default class Analysis {
+export class Asset {
     @IsString({message: `Property 'assetType' is not type string.`})
     @IsEnum(AssetType, {message: `Property 'assetType' must be 'Stock', 'Crypto' or 'Fiat'.`})
     @IsOptional()
     public assetType: string;
+}
 
+export class Analysis extends Asset {
     @IsString({message: `Property 'name' is not type string.`})
     @IsOptional()
     public name: string;

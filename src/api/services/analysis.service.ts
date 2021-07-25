@@ -4,9 +4,19 @@ import { AssetInformation } from '../typings/asset';
 
 class AnalysisService {
 
+    /**
+     * 
+     * @param query 
+     * @param numberRecords 
+     * @returns 
+     */
     public async getGeneralData (query: AssetInformation, numberRecords?: number) {
         const AnalysisModel = getModelForClass(Analytic);
 
+        if (!numberRecords) {
+            numberRecords = 1000
+        }
+        
         let records = await AnalysisModel.find(query).limit(numberRecords);
 
         if (records) {
@@ -26,47 +36,124 @@ class AnalysisService {
      */
     public async getAggregatedDate (query: AssetInformation) {
         const AnalysisModel = getModelForClass(Analytic);
-        
         let records = await AnalysisModel.aggregate([
-            {$match: query},
             {
+                $match: query },
+                
+              {
                 $group: {
-                    _id: '$Symbol',
-                    Symbol: { $first: '$Symbol' },
-                    AssetType: { $first: '$AssetType' },
-                    Country: { $first: '$Country' },
-                    Exchange: { $first: '$Exchange' },
-                    Industry: { $first: '$Industry' },
-                    Name: { $first: '$Name' },
-                    Sector: { $first: '$Sector' },
-                    Sentiment: { $avg: '$Sentiment' },
-                    Mentions: { $sum: 1 }
+                  _id: {
+                    Symbol: "$Symbol",
+                    Platform: "$Platform",
+                    Source: "$Source"
+                  },
+                  TotalSentiment: {
+                    $avg: "$Sentiment"
+                  },
+                  TotalMentions: {
+                    $sum: 1
+                  },
+                  Document: {
+                    $first: "$$ROOT"
+                  }
                 }
-            },
-            {
-                $addFields: {
-                    _id: '$_id',
-                    Sentiment: {$round: ['$Sentiment', 3]}
-                }
-            },
-            {
-                $replaceRoot: {
-                    'newRoot': {
-                        $arrayToObject: {
-                            $filter: {
-                                input: { $objectToArray: '$$ROOT'},
-                                cond: { $ne: [ '$$this.v', null ] }
-                            }
-                        }
+              },
+              {
+                $group: {
+                  _id: {
+                    Symbol: "$_id.Symbol",
+                    Platform: "$_id.Platform"
+                  },
+                  val: {
+                    $addToSet: {
+                      Source: "$_id.Source",
+                      Mentions: {
+                        $sum: "$TotalMentions"
+                      },
+                      Sentiment: {
+                        $round: [
+                          "$TotalSentiment",
+                          3
+                        ]
+                      }
                     }
+                  },
+                  TotalSentiment: {
+                    $avg: "$TotalSentiment"
+                  },
+                  TotalMentions: {
+                    $sum: "$TotalMentions"
+                  },
+                  Document: {
+                    $first: "$Document"
+                  }
                 }
-            },
-            {  
-                $sort: { _id: 1 }
-            },
-            {
-                $unset: '_id'
-            },
+              },
+              {
+                $group: {
+                  _id: {
+                    Symbol: "$_id.Symbol"
+                  },
+                  AssetType: {
+                    $first: "$Document.AssetType"
+                  },
+                  Country: {
+                    $first: "$Document.Country"
+                  },
+                  Exchange: {
+                    $first: "$Document.Exchange"
+                  },
+                  Industry: {
+                    $first: "$Document.Industry"
+                  },
+                  Name: {
+                    $first: "$Document.Name"
+                  },
+                  Sector: {
+                    $first: "$Document.Sector"
+                  },
+                  Symbol: {
+                    "$first": "$_id.Symbol"
+                  },
+                  Analysis: {
+                    "$push": {
+                      Platform: "$_id.Platform",
+                      TotalSentiment: {
+                        $round: [
+                          "$TotalSentiment",
+                          3
+                        ]
+                      },
+                      TotalMentions: {
+                        $sum: "$TotalMentions"
+                      },
+                      Sources: "$val"
+                    }
+                  }
+                }
+              },
+              {
+                $unset: "_id"
+              },
+              {
+                $replaceRoot: {
+                  "newRoot": {
+                    $arrayToObject: {
+                      $filter: {
+                        input: {
+                          $objectToArray: "$$ROOT"
+                        },
+                        cond: {
+                          $ne: [
+                            "$$this.v",
+                            null
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
         ]);
 
         return records;

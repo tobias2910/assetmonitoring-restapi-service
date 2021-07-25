@@ -15,6 +15,8 @@ const envConfigSchema = Joi.object().keys({
     MONGODB_DATABASE: Joi.string().required().description('MongoDB Database'),
     MONGODB_ASSET_COLLECTION: Joi.string().required().description('MongoDB Asset Collection'),
     MONGODB_ANALYTIC_COLLECTION: Joi.string().required().description('MongoDB Analysis Collection'),
+    REDIS_HOST: Joi.string().required().description('Redis Host'),
+    REDIS_PORT: Joi.number().required().description('Redis Port'),
     RATE_LIMITER: Joi.number().required().description('Rate Limiter')
 }).unknown();
 
@@ -35,6 +37,10 @@ const configData: ConfigData = {
         database: values.MONGODB_DATABASE,
         assetCollection: values.MONGODB_ASSET_COLLECTION,
         analysisCollection: values.MONGODB_ANALYTIC_COLLECTION
+    },
+    redis: {
+        host: values.REDIS_HOST,
+        port: values.REDIS_PORT
     }
 };
 

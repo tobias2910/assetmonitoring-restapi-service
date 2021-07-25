@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validateBodyMiddleware, validateQueryMiddleware } from "../../middleware/validationMiddleware";
-import { GetAsset, UpdateAssetBody, UpdateAssetQuery } from "../../validations/asset.validation";
+import { CreateAsset, GetAsset, UpdateAssetBody, UpdateAssetQuery } from "../../validations/asset.validation";
 import AssetController from "../../controllers/asset.controller";
 
 export default class AnalysisRoute {
@@ -25,7 +25,7 @@ export default class AnalysisRoute {
         // this.router.use(generalLimiter);
         this.router.get('/', validateQueryMiddleware(GetAsset), this.assetController.obtainAssetData);
         this.router.put('/', validateQueryMiddleware(UpdateAssetQuery), validateBodyMiddleware(UpdateAssetBody),this.assetController.updateAssetData);
-
+        this.router.post('/', validateBodyMiddleware(CreateAsset), this.assetController.createNewAsset);
     }
 
 }

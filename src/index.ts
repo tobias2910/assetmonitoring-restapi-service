@@ -7,6 +7,8 @@ import { logger } from './api/config/logger';
 
 let server: Server;
 
+
+
 // Connect to mongoDB and activate the server listener
 mongoose.connect(`mongodb://${ConfigData.mongoDB.url}/${ConfigData.mongoDB.database}`, {
     auth: {
