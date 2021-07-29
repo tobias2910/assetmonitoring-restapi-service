@@ -21,7 +21,7 @@ export default class AssetController {
 
             if (!records) {
                 records = await assetService.getAssetData(query, parseInt(<string> req.query.numberRecords));
-                await Redis.saveResultWithTtl(redisCacheKey, JSON.stringify(records));    
+                await Redis.saveResultWithTtl(redisCacheKey, records);    
             }
 
             res.status(httpStatus.OK).header('X-Total-Count', records.length).json(records);

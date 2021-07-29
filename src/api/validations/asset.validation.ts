@@ -28,26 +28,27 @@ export class GetAsset {
     public symbol: string;
 }
 
-export class UpdateAssetBody {
-    @IsString({message: `Property 'Name' is not type string.`})
-    @IsOptional()
-    public Name: string;
-
-    @IsString({message: `Property 'Symbol' is not type string.`})
-    @IsNotEmpty({message: `Property 'Symbol' is missing in the body.`})
-    public Symbol: string;
-}
-
-export class UpdateAssetQuery {
-    @IsString({message: `Property 'Symbol' is not type string.`})
-    @IsNotEmpty({message: `Property 'Symbol' is missing in the body.`})
-    public symbol: string;
-}
-
 export class Asset {
     @IsString({message: `Property 'Symbol' is not type string.`})
     @IsNotEmpty({message: `Property 'Symbol' is missing in the body.`})
     public Symbol: string;
+}
+
+export class UpdateAssetBody extends Asset {
+    @IsString({message: `Property 'Name' is not type string.`})
+    @IsNotEmpty({message: `Property 'Name' is missing in the body.`})
+    public Name: string;
+}
+
+export class UpdateAssetQuery {
+    @IsString({message: `Property 'symbol' is not type string.`})
+    @IsNotEmpty({message: `Property 'symbol' is missing in the body.`})
+    public symbol: string; 
+
+    @IsString({message: `Property 'assetType' is not type string.`})
+    @IsEnum(AssetType, {message: `Property 'assetType' must be 'Stock', 'Crypto' or 'Fiat'.`})
+    @IsNotEmpty({message: `Property 'assetType' is missing in the body.`})
+    public assetType: string; 
 }
 
 export class CreateAsset extends Asset {

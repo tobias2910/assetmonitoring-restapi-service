@@ -25,7 +25,7 @@ export default class AnalysisController {
 
             if (!records) {
                 records = await analysisService.getGeneralData(query, parseInt(<string> req.query.numberRecords));
-                await Redis.saveResultWithTtl(redisCacheKey, JSON.stringify(records));    
+                await Redis.saveResultWithTtl(redisCacheKey, records);    
             }
 
             res.status(httpStatus.OK).header('X-Total-Count', records.length).json(records);
@@ -75,7 +75,7 @@ export default class AnalysisController {
 
             if (!records) {
                 records = await analysisService.getAggregatedDate(query);
-                await Redis.saveResultWithTtl(redisCacheKey, JSON.stringify(records));    
+                await Redis.saveResultWithTtl(redisCacheKey, records);    
             }
 
             res.status(httpStatus.OK).header('X-Total-Count', records.length).json(records);

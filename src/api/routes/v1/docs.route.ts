@@ -2,11 +2,15 @@ import { Request, Response, Router } from 'express';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 
-import config from '../../docs/swagger.json';
+import { swaggerDefinition } from '../../docs/swagger';
 import HttpException from '../../utils/httpException';
 
 export default class SwaggerRouter {
     private router = Router ();
+    private readonly specification = swaggerJsdoc({
+        swaggerDefinition: swaggerDefinition,
+        apis: ['./dist/api/docs/components.yml', './dist/api/routes/v1/*.js']
+    })
 
     constructor () {
         this.configureRoutes();
@@ -33,7 +37,7 @@ export default class SwaggerRouter {
      */
     private configureRoutes(): void {
         this.router.use('/', swaggerUi.serve);
-        this.router.get('/', swaggerUi.setup(config, {
+        this.router.get('/', swaggerUi.setup(this.specification, {
             explorer: true
         }));
         

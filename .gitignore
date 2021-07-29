@@ -77,3 +77,6 @@ dist/
 
 # FuseBox cache
 .fusebox/
+
+# VS Code
+.vscode/

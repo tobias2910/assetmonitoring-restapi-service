@@ -3,6 +3,7 @@ import { ExtractJwt, Strategy, StrategyOptions, VerifiedCallback } from 'passpor
 
 import User from '../models/user.model';
 import { tokenTypes } from './tokens';
+import ConfigData from '../config/config'
 
 export class Passport {
     private readonly jwtOptions: StrategyOptions;
@@ -19,7 +20,7 @@ export class Passport {
      */
     private defineJwtOptions (): StrategyOptions {
         return {
-            secretOrKey: 'loremIpsum90',
+            secretOrKey: ConfigData.jwtSecret,
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
         }
     }

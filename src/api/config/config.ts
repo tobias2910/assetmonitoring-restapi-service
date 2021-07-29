@@ -9,6 +9,7 @@ config( {path: ENV_FILE} );
 const envConfigSchema = Joi.object().keys({
     NODE_ENV: Joi.string().valid('prod', 'test', 'dev').default('dev'),
     PORT: Joi.number().required().description('Port Database'),
+    JWT_SECRET: Joi.string().required().description('JWTSecret'),
     MONGODB_URL: Joi.string().required().description('MongoDB URL'),
     MONGODB_USERNAME: Joi.string().required().description('MongoDB Username'),
     MONGODB_PASSWORD: Joi.string().required().description('MongoDB Password'),
@@ -30,6 +31,11 @@ const configData: ConfigData = {
     env: values.NODE_ENV,
     port: values.PORT,
     rateLimiter: values.RATE_LIMITER,
+    jwtSecret: values.JWT_SECRET,
+    bearer: {
+        accessExpire: values.ACCESS_TOKEN_MINUTES,
+        refreshExpire: values.REFRESH_TOKEN_DAYS 
+    },
     mongoDB: {
         url: values.MONGODB_URL,
         username: values.MONGODB_USERNAME,

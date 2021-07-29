@@ -41,8 +41,6 @@ class App {
         // Enable the logger
         this.app.use(successHandler);
         this.app.use(errorHandler);
-        // Enable security headers        
-        this.app.use(helmet());
         // Enable cors
         this.app.use(cors());
         // Enable gzip compression
@@ -67,6 +65,8 @@ class App {
      */
     private initializeRoutes() {
         this.app.use('/api/v1', router);
+        // Enable security headers        
+        this.app.use(helmet());
     }
 
     /**

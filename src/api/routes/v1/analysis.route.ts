@@ -2,6 +2,7 @@ import { Router } from "express";
 import { validateQueryMiddleware } from "../../middleware/validationMiddleware";
 import { Analysis } from "../../validations/analysis.validation";
 import AnalysisController from "../../controllers/analysis.controller";
+import { authorizeUser } from "../../middleware/authMiddleware";
 
 export default class AnalysisRoute {
     private router: Router;
@@ -22,9 +23,76 @@ export default class AnalysisRoute {
     }
 
     private configureRouter (): void {
-        // this.router.use(generalLimiter);
-        this.router.get('/', validateQueryMiddleware(Analysis), this.analysisController.obtainGeneralData);
-        this.router.get('/aggregated', validateQueryMiddleware(Analysis), this.analysisController.obtainAggregatedData);
+        /**
+         * @swagger
+         * tags:
+         *   name: Analysis
+         *   description: Provides the analysis information for the identified assets.
+        */
+
+        /**
+         * @swagger
+         * /analysis:
+         *   get:
+         *     summary: Provides the general analysis information including the timestamp as well as the sentiment that is based on the post where the asset was extracted.
+         *     tags: [Analysis]
+         *     security:
+         *      - bearerAuth: []
+         *     parameters:
+         *       - $ref: '#/components/parameters/AssetType'
+         *       - $ref: '#/components/parameters/Name'
+         *       - $ref: '#/components/parameters/Platform'
+         *       - $ref: '#/components/parameters/Symbol'
+         *       - $ref: '#/components/parameters/Source'
+         *       - $ref: '#/components/parameters/StartDate'
+         *       - $ref: '#/components/parameters/EndDate'
+         *     responses:
+         *       "200":
+         *         description: OK
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: array
+         *               items:
+         *                  $ref: '#/components/schemas/Analysis'
+         *       "400":
+         *         $ref: '#/components/responses/WrongQuery' 
+         *       "401":
+         *         $ref: '#/components/responses/Unauthorized'
+         */       
+        this.router.get('/', authorizeUser(), validateQueryMiddleware(Analysis), this.analysisController.obtainGeneralData);
+
+        /**
+         * @swagger
+         * /analysis/aggregated:
+         *   get:
+         *     summary: Provides the aggregated overview for the analysis including the total number of mentions as well as the average sentiment across all platforms and sources.
+         *     tags: [Analysis]
+         *     security:
+         *      - bearerAuth: []
+         *     parameters:
+         *       - $ref: '#/components/parameters/AssetType'
+         *       - $ref: '#/components/parameters/Name'
+         *       - $ref: '#/components/parameters/Platform'
+         *       - $ref: '#/components/parameters/Symbol'
+         *       - $ref: '#/components/parameters/Source'
+         *       - $ref: '#/components/parameters/StartDate'
+         *       - $ref: '#/components/parameters/EndDate'
+         *     responses:
+         *       "200":
+         *         description: OK
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: array
+         *               items:
+         *                  $ref: '#/components/schemas/AggregatedAnalysis'
+         *       "400":
+         *         $ref: '#/components/responses/WrongQuery' 
+         *       "401":
+         *         $ref: '#/components/responses/Unauthorized'
+         */   
+        this.router.get('/aggregated', authorizeUser(), validateQueryMiddleware(Analysis), this.analysisController.obtainAggregatedData);
     }
 
 }

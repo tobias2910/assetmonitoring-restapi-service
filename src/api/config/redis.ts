@@ -51,7 +51,7 @@ class Redis {
         const jsonString = await this.getAsync(key);
 
         if (jsonString) {
-            return JSON.parse(JSON.parse(jsonString));
+            return JSON.parse(jsonString);
         }
     }
 }

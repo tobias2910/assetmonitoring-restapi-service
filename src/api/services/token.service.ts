@@ -9,6 +9,7 @@ import  Token from '../models/token.model';
 import UserService from '../services/user.service';
 import { JWTToken } from '../typings/token'
 import HttpException from '../utils/httpException';
+import ConfigData from '../config/config';
 
 class TokenService {
     /**
@@ -19,7 +20,7 @@ class TokenService {
      * @param {string} secret -
      */
     private generateToken (userId: ObjectId, expiresIn: moment.Moment, 
-                           type: string, secret: string = 'loremIpsum90'): string {
+                           type: string, secret: string = ConfigData.jwtSecret ): string {
         const payload = {
             sub: userId,
             iat: moment().unix(),
@@ -60,7 +61,7 @@ class TokenService {
      * @returns 
      */
     public async verifyToken (token: string, type: string) {
-        const payload: any = jwt.verify(token, 'loremIpsum90');
+        const payload: any = jwt.verify(token, ConfigData.jwtSecret);
         const TokenModel = getModelForClass(Token);
         const tokenDoc = await TokenModel.findOne({ token, type, user: payload.sub, blacklisted: false});
         if (!tokenDoc) {
@@ -76,10 +77,10 @@ class TokenService {
      * @returns 
      */
     public async generateAuthTokens (user: any): Promise<JWTToken> {
-        const accessTokenExpires = moment().add(30, 'minutes');
+        const accessTokenExpires = moment().add(ConfigData.bearer.accessExpire, 'minutes');
         const accessToken = this.generateToken(user.id, accessTokenExpires, tokenTypes.ACCESS);
 
-        const refreshTokenExpires = moment().add(1, 'days');
+        const refreshTokenExpires = moment().add(ConfigData.bearer.refreshExpire, 'days');
         const refreshToken = this.generateToken(user.id, refreshTokenExpires, tokenTypes.REFRESH);
         await this.saveToken(refreshToken, user.id, refreshTokenExpires, tokenTypes.REFRESH);
 

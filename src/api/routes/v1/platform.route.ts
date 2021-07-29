@@ -2,6 +2,7 @@ import { Router } from "express";
 import { validateQueryMiddleware } from "../../middleware/validationMiddleware";
 import { Analysis, Asset } from "../../validations/analysis.validation";
 import PlatformController from "../../controllers/platform.controller";
+import { authorizeUser } from "../../middleware/authMiddleware";
 
 export default class PlatformRoute {
     private router: Router;
@@ -22,8 +23,70 @@ export default class PlatformRoute {
     }
 
     private configureRouter (): void {
-        this.router.get('/', validateQueryMiddleware(Asset), this.platformController.obtainPlatformInformation);
-        this.router.get('/analysis', validateQueryMiddleware(Analysis), this.platformController.obtainAggregatedPlatformSentiment);
+
+        /**
+         * @swagger
+         * tags:
+         *   name: Platform
+         *   description: Provides general platform as well as analysis relevant information
+        */
+
+        /**
+         * @swagger
+         * /platform:
+         *   get:
+         *     summary: Provides an overview of the monitored platforms and the corresponding channels.
+         *     tags: [Platform]
+         *     security:
+         *      - bearerAuth: []
+         *     parameters:
+         *     - $ref: '#/components/parameters/AssetType'
+         *     responses:
+         *       "200":
+         *         description: OK
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: array
+         *               items:
+         *                  $ref: '#/components/schemas/Platform'
+         *       "400":
+         *         $ref: '#/components/responses/WrongQuery' 
+         *       "401":
+         *         $ref: '#/components/responses/Unauthorized'
+         */        
+        this.router.get('/', authorizeUser(), validateQueryMiddleware(Asset), this.platformController.obtainPlatformInformation);
+        /**
+        * @swagger
+        * /platform/analysis:
+        *   get:
+        *       summary: Provides an aggregated overview for all identified assets that matches the provided queries.
+        *       tags: [Platform]
+        *       security:
+        *       - bearerAuth: []
+        *       parameters:
+        *       - $ref: '#/components/parameters/AssetType'
+        *       - $ref: '#/components/parameters/Name'
+        *       - $ref: '#/components/parameters/Platform'
+        *       - $ref: '#/components/parameters/Symbol'
+        *       - $ref: '#/components/parameters/Source'
+        *       - $ref: '#/components/parameters/StartDate'
+        *       - $ref: '#/components/parameters/EndDate'
+        *       responses:
+        *         "200":
+        *           description: OK
+        *           content:
+        *             application/json:
+        *               schema:
+        *                 type: array
+        *                 items:
+        *                    $ref: '#/components/schemas/PlatformAnalysis'
+        *         "400":
+        *           $ref: '#/components/responses/WrongQuery' 
+        *         "401":
+        *           $ref: '#/components/responses/Unauthorized'
+        */
+        this.router.get('/analysis', authorizeUser(), validateQueryMiddleware(Analysis), this.platformController.obtainAggregatedPlatformSentiment);
     }
 
 }

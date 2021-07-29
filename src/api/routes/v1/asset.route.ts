@@ -2,6 +2,7 @@ import { Router } from "express";
 import { validateBodyMiddleware, validateQueryMiddleware } from "../../middleware/validationMiddleware";
 import { CreateAsset, GetAsset, UpdateAssetBody, UpdateAssetQuery } from "../../validations/asset.validation";
 import AssetController from "../../controllers/asset.controller";
+import { authorizeUser } from "../../middleware/authMiddleware";
 
 export default class AnalysisRoute {
     private router: Router;
@@ -22,10 +23,93 @@ export default class AnalysisRoute {
     }
 
     private configureRouter (): void {
-        // this.router.use(generalLimiter);
-        this.router.get('/', validateQueryMiddleware(GetAsset), this.assetController.obtainAssetData);
-        this.router.put('/', validateQueryMiddleware(UpdateAssetQuery), validateBodyMiddleware(UpdateAssetBody),this.assetController.updateAssetData);
-        this.router.post('/', validateBodyMiddleware(CreateAsset), this.assetController.createNewAsset);
+        /**
+         * @swagger
+         * tags:
+         *   name: Asset
+         *   description: The endpoint for creating, updating and obtaining asset information.
+        */
+
+        /**
+         * @swagger
+         * /asset:
+         *   get:
+         *     summary: Provides the asset information that matches the provided query.
+         *     tags: [Asset]
+         *     security:
+         *      - bearerAuth: []
+         *     parameters:
+         *     - $ref: '#/components/parameters/AssetType'
+         *     - $ref: '#/components/parameters/Name'
+         *     - $ref: '#/components/parameters/Symbol'
+         *     responses:
+         *       "200":
+         *         description: OK
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: array
+         *               items:
+         *                  $ref: '#/components/schemas/Asset'
+         *       "400":
+         *         $ref: '#/components/responses/WrongQuery' 
+         *       "401":
+         *         $ref: '#/components/responses/Unauthorized'
+         */       
+        this.router.get('/', authorizeUser(), validateQueryMiddleware(GetAsset), this.assetController.obtainAssetData);
+        
+        /**
+         * @swagger
+         * /asset:
+         *   put:
+         *     summary: Updates the requested asset information that matches the provided query.
+         *     tags: [Asset]
+         *     security:
+         *     - bearerAuth: []
+         *     requestBody:
+         *       $ref: '#/components/requestBodies/UpdateAsset'
+         *     parameters:
+         *     - $ref: '#/components/parameters/AssetType'
+         *     - $ref: '#/components/parameters/Symbol'
+         *     responses:
+         *       "200":
+         *         description: OK
+         *         content:
+         *           application/json:
+         *             schema:
+         *               $ref: '#/components/schemas/UpdateAsset'
+         *       "400":
+         *         $ref: '#/components/responses/WrongQuery' 
+         *       "401":
+         *         $ref: '#/components/responses/Unauthorized'
+         */
+        this.router.put('/', authorizeUser(), validateQueryMiddleware(UpdateAssetQuery), validateBodyMiddleware(UpdateAssetBody),this.assetController.updateAssetData);
+        
+        /**
+         * @swagger
+         * /asset:
+         *   post:
+         *     summary: Create a new asset in the asset collection.
+         *     tags: [Asset]
+         *     security:
+         *     - bearerAuth: []
+         *     requestBody:
+         *      $ref: '#/components/requestBodies/CreateAsset'
+         *     responses:
+         *       "200":
+         *         description: OK
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: array
+         *               items:
+         *                  $ref: '#/components/schemas/Asset'
+         *       "400":
+         *         $ref: '#/components/responses/MissingBodyInfo' 
+         *       "401":
+         *         $ref: '#/components/responses/Unauthorized'
+         */
+        this.router.post('/', authorizeUser(), validateBodyMiddleware(CreateAsset), this.assetController.createNewAsset);
     }
 
 }

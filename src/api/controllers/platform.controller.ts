@@ -25,8 +25,8 @@ export default class AssetController {
             let records = await Redis.getResult(redisCacheKey);
 
             if (!records) {
-                const records = await platformService.getPlatformData(query);
-                await Redis.saveResultWithTtl(redisCacheKey, JSON.stringify(records));    
+                records = await platformService.getPlatformData(query);
+                await Redis.saveResultWithTtl(redisCacheKey, records);    
             }
 
             res.status(httpStatus.OK).header('X-Total-Count', records.length).json(records);
@@ -49,7 +49,6 @@ export default class AssetController {
             query.Name = req.query.name;
             query.Platform = req.query.platform;
             query.Symbol = req.query.symbol;
-            query.Platform = req.query.platform;
             query.Source = req.query.source;
 
             let startDate: moment.Moment | undefined = undefined;
@@ -77,12 +76,12 @@ export default class AssetController {
             
             Object.keys(query).forEach((key) => query[key] === undefined && delete query[key]);
             
-            const redisCacheKey = `platform_query_${JSON.stringify(query)}`;
+            const redisCacheKey = `platform_agg_query_${JSON.stringify(query)}`;
             let records = await Redis.getResult(redisCacheKey);
 
             if (!records) {
-                const records = await platformService.getAggregatedDate(query);
-                await Redis.saveResultWithTtl(redisCacheKey, JSON.stringify(records));    
+                records = await platformService.getAggregatedDate(query);
+                await Redis.saveResultWithTtl(redisCacheKey, records);    
             }
             
             res.status(httpStatus.OK).header('X-Total-Count', records.length).json(records);

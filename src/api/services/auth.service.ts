@@ -5,6 +5,7 @@ import TokenService from '../services/token.service'
 import User from "../models/user.model";
 import HttpException from "../utils/httpException";
 import { JWTToken } from '../typings/token';
+import { tokenTypes } from '../config/tokens';
 
 class AuthService {
 
@@ -24,9 +25,28 @@ class AuthService {
     }
 
     public async generateJWTToken (user: any): Promise <JWTToken> {
-        const token = TokenService.generateAuthTokens(user);
+        const token = await TokenService.generateAuthTokens(user);
         
         return token;
+    }
+
+    public async refreshToken (refreshToken: string): Promise <JWTToken> {
+        try {
+            const tokenDocument = await TokenService.verifyToken(refreshToken, tokenTypes.REFRESH);
+            const UserModel = getModelForClass(User);
+            const user = await UserModel.findById(tokenDocument.user);
+
+            if(!user) {
+                throw new Error();
+            } 
+
+            await tokenDocument.remove();
+            
+            return TokenService.generateAuthTokens(user);
+    
+        } catch(error) {
+            throw new HttpException(httpStatus.UNAUTHORIZED, 'Invalid refresh token.');
+        }
     }
 
 }
