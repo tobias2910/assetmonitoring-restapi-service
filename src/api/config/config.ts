@@ -2,6 +2,7 @@ import { config } from 'dotenv';
 import * as path from 'path';
 import Joi from 'joi';
 import { ConfigData } from '../typings/config';
+import value from 'xss-clean';
 
 const ENV_FILE = path.join(__dirname, '../../..', '.env');
 config( {path: ENV_FILE} );
@@ -9,6 +10,7 @@ config( {path: ENV_FILE} );
 const envConfigSchema = Joi.object().keys({
     NODE_ENV: Joi.string().valid('prod', 'test', 'dev').default('dev'),
     PORT: Joi.number().required().description('Port Database'),
+    CERT_PASSPHRASE: Joi.string().required().description('Cert Passphrase'),
     JWT_SECRET: Joi.string().required().description('JWTSecret'),
     MONGODB_URL: Joi.string().required().description('MongoDB URL'),
     MONGODB_USERNAME: Joi.string().required().description('MongoDB Username'),
@@ -30,6 +32,7 @@ if (error) {
 const configData: ConfigData = {
     env: values.NODE_ENV,
     port: values.PORT,
+    certPassphrase: values.CERT_PASSPHRASE,
     rateLimiter: values.RATE_LIMITER,
     jwtSecret: values.JWT_SECRET,
     bearer: {

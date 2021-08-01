@@ -2,7 +2,8 @@ import { Router } from "express";
 import { validateBodyMiddleware, validateQueryMiddleware } from "../../middleware/validationMiddleware";
 import { CreateAsset, GetAsset, UpdateAssetBody, UpdateAssetQuery } from "../../validations/asset.validation";
 import AssetController from "../../controllers/asset.controller";
-import { authorizeUser } from "../../middleware/authMiddleware";
+import { authorizeUser, validatePermissions } from "../../middleware/authMiddleware";
+import roles from '../../config/roles';
 
 export default class AnalysisRoute {
     private router: Router;
@@ -83,7 +84,7 @@ export default class AnalysisRoute {
          *       "401":
          *         $ref: '#/components/responses/Unauthorized'
          */
-        this.router.put('/', authorizeUser(), validateQueryMiddleware(UpdateAssetQuery), validateBodyMiddleware(UpdateAssetBody),this.assetController.updateAssetData);
+        this.router.put('/', authorizeUser(), validatePermissions(roles.getRoles()[1]), validateQueryMiddleware(UpdateAssetQuery), validateBodyMiddleware(UpdateAssetBody),this.assetController.updateAssetData);
         
         /**
          * @swagger
@@ -109,7 +110,7 @@ export default class AnalysisRoute {
          *       "401":
          *         $ref: '#/components/responses/Unauthorized'
          */
-        this.router.post('/', authorizeUser(), validateBodyMiddleware(CreateAsset), this.assetController.createNewAsset);
+        this.router.post('/', authorizeUser(), validatePermissions(roles.getRoles()[1]), validateBodyMiddleware(CreateAsset), this.assetController.createNewAsset);
     }
 
 }

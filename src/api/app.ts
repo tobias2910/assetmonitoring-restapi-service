@@ -38,6 +38,8 @@ class App {
      * 
      */
     private initializeMiddleware() {
+        // Enable security headers        
+        this.app.use(helmet());
         // Enable the logger
         this.app.use(successHandler);
         this.app.use(errorHandler);
@@ -51,8 +53,8 @@ class App {
         this.app.use(express.urlencoded({ extended: true }));
         // Sanitize the request data
         this.app.use(xss());
-        this.app.use(mongoSanitize());
         // Sanitize mongo
+        this.app.use(mongoSanitize());
         // Enable passport
         this.app.use(passport.initialize());
         passport.use('jwt', jwtStrategy)
@@ -65,8 +67,6 @@ class App {
      */
     private initializeRoutes() {
         this.app.use('/api/v1', router);
-        // Enable security headers        
-        this.app.use(helmet());
     }
 
     /**
