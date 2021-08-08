@@ -1,6 +1,6 @@
 FROM node:12.18-alpine
 ENV NODE_ENV=prod
-ENV PORT=3100
+ENV PORT=3000
 ENV CERT_PASSPHRASE=doskovA_1992cali
 ENV JWT_SECRET=_VUejyfp7iO6Bp6VM082RZy5vQERQUWSjjG8jWG0pD
 ENV ACCESS_TOKEN_MINUTES=30
@@ -18,5 +18,5 @@ WORKDIR /usr/app/
 COPY "package.json" ./
 RUN npm install
 COPY . .
-EXPOSE 3100
+EXPOSE 3000
 CMD ["node", "dist/index.js"]

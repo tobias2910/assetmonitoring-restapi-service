@@ -3,7 +3,7 @@ import { validateBodyMiddleware } from "../../middleware/validationMiddleware";
 import { CreateUser } from "../../validations/user.validation";
 import UserController from "../../controllers/user.controller";
 import roles from "../../config/roles";
-import { validatePermissions } from "../../middleware/authMiddleware";
+import { authorizeUser, validatePermissions } from "../../middleware/authMiddleware";
 
 export default class UserRouter {
     private router: Router;
@@ -24,7 +24,7 @@ export default class UserRouter {
     }
 
     private configureRouter (): void {
-        this.router.post('/', validatePermissions(roles.getRoles()[1]), validateBodyMiddleware(CreateUser), this.userController.createNewUser);
+        this.router.post('/', authorizeUser(), validatePermissions(roles.getRoles()[1]), validateBodyMiddleware(CreateUser), this.userController.createNewUser);
     }
 
 }

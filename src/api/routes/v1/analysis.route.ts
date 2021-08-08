@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validateQueryMiddleware } from "../../middleware/validationMiddleware";
-import { Analysis } from "../../validations/analysis.validation";
+import { Analysis, AnalysisTopAssets } from "../../validations/analysis.validation";
 import AnalysisController from "../../controllers/analysis.controller";
 import { authorizeUser } from "../../middleware/authMiddleware";
 
@@ -93,6 +93,38 @@ export default class AnalysisRoute {
          *         $ref: '#/components/responses/Unauthorized'
          */   
         this.router.get('/aggregated', authorizeUser(), validateQueryMiddleware(Analysis), this.analysisController.obtainAggregatedData);
-    }
 
+        /**
+         * @swagger
+         * /analysis/aggregated/topAssets:
+         *   get:
+         *     summary: Provides the aggregated asset information sorted by the total mentions across all platforms and limited to maximum 100 records.
+         *     tags: [Analysis]
+         *     security:
+         *      - bearerAuth: []
+         *     parameters:
+         *       - $ref: '#/components/parameters/AssetType'
+         *       - $ref: '#/components/parameters/Name'
+         *       - $ref: '#/components/parameters/Platform'
+         *       - $ref: '#/components/parameters/Symbol'
+         *       - $ref: '#/components/parameters/Source'
+         *       - $ref: '#/components/parameters/StartDate'
+         *       - $ref: '#/components/parameters/EndDate'
+         *       - $ref: '#/components/parameters/Limit'
+         *     responses:
+         *       "200":
+         *         description: OK
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: array
+         *               items:
+         *                  $ref: '#/components/schemas/AggregatedAnalysis'
+         *       "400":
+         *         $ref: '#/components/responses/WrongQuery' 
+         *       "401":
+         *         $ref: '#/components/responses/Unauthorized'
+         */   
+        this.router.get('/aggregated/topAssets', authorizeUser(), validateQueryMiddleware(AnalysisTopAssets), this.analysisController.obtainAggregatedTopAssets);
+    }
 }

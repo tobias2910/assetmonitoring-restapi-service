@@ -321,6 +321,12 @@ components:
         type: string
         format: date
       description: The date till when to start looking for mentions. This is the date, when the post was identified not the date, when it was published. Must be after the query 'startDate'. 
+    Limit:
+      in: query
+      name: 'limit'
+      schema:
+        type: number
+      description: Number of assets to return. If not specified, the default of maximum 100 assets will be returned.
 
   securitySchemes:
     bearerAuth:

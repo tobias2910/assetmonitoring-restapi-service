@@ -1,8 +1,12 @@
+import { Transform, Type } from "class-transformer";
 import { IsString, 
          IsEnum, 
          IsOptional, 
          IsNumber, 
-         Matches} from "class-validator";
+         Matches,
+         Max,
+         Min,
+         IsNumberString} from "class-validator";
 
 enum AssetType {
     Crypto = 'Crypto',
@@ -11,8 +15,8 @@ enum AssetType {
 }
 
 enum Platform {
-    Reddit = 'Reddit',
-    Twitter = 'Twitter'
+    Reddit = 'reddit',
+    Twitter = 'twitter'
 }
 
 export class Asset {
@@ -32,7 +36,7 @@ export class Analysis extends Asset {
     public symbol: string;
 
     @IsString({message: `Property 'platform' is not type string.`})
-    @IsEnum(Platform, {message: `Property 'Platform' must be 'Reddit' or 'Twitter'.`})
+    @IsEnum(Platform, {message: `Property 'Platform' must be 'reddit' or 'twitter'.`})
     @IsOptional()
     public platform: string;
 
@@ -51,4 +55,14 @@ export class Analysis extends Asset {
     @Matches(/^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$/, {message: `Property 'startDate' is not a date. Please provide a date in format 'dd.mm.yyyy'`})
     @IsOptional()
     public startDate: Date;
+}
+
+export class AnalysisTopAssets extends Analysis {
+
+    @Max(100, {message: `Property 'limit' can be maximum 100.`})
+    @Min(0, {message: `Property 'limit' must be minimum 0.`})
+    @Type(() => Number)
+    @IsNumber({}, {message: `Property 'limit' is not a number.`})
+    @IsOptional()
+    public limit: number;
 }

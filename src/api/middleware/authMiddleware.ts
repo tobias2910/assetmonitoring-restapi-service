@@ -3,18 +3,28 @@ import httpStatus from 'http-status';
 import passport from 'passport';
 import httpException from '../utils/httpException';
 
+/**
+ * 
+ * @returns 
+ */
 export function authorizeUser (): RequestHandler {
     return (req: Request, res: Response, next: NextFunction) => {
             passport.authenticate('jwt', {session: false}, (err, user, info) => { 
                 if (err || !user || info) {
                     next (new httpException(httpStatus.UNAUTHORIZED, 'You are not authenticated. Please provide your bearer token.'));
+                } else {
+                    res.locals.userRole = user._doc.role;
                 }
-                res.locals.userRole = user._doc.role;
                 next ();
             })(req, res, next);
     }
 }
 
+/**
+ * 
+ * @param requiredRole 
+ * @returns 
+ */
 export function validatePermissions (requiredRole: string): RequestHandler {
     return(req: Request, res: Response, next: NextFunction) => {
         if (res.locals.userRole !== requiredRole) {
