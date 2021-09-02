@@ -9,9 +9,9 @@ import httpException from '../utils/httpException';
  */
 export function authorizeUser (): RequestHandler {
     return (req: Request, res: Response, next: NextFunction) => {
-            passport.authenticate('jwt', {session: false}, (err, user, info) => { 
+            passport.authenticate(['jwt', 'apiKey'], {session: false}, (err, user, info) => { 
                 if (err || !user || info) {
-                    next (new httpException(httpStatus.UNAUTHORIZED, 'You are not authenticated. Please provide your bearer token.'));
+                    next (new httpException(httpStatus.UNAUTHORIZED, 'You are not authenticated. Please provide your bearer token OR your API key.'));
                 } else {
                     res.locals.userRole = user._doc.role;
                 }

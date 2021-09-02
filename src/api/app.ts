@@ -13,7 +13,7 @@ import HttpException from './utils/httpException';
 import exceptionMiddleware from './middleware/errorMiddleware';
 import {router} from './routes/v1';
 import passport from 'passport';
-import jwtStrategy from './config/passport';
+import jwtStrategy, {PassportAPIKey} from './config/passport';
 
 class App {
     private app: express.Application;
@@ -58,6 +58,7 @@ class App {
         // Enable passport
         this.app.use(passport.initialize());
         passport.use('jwt', jwtStrategy)
+        passport.use('apiKey', new PassportAPIKey().apiKeyStrategy)
         // Enable the limiter
         this.app.use(generalLimiter);
     }

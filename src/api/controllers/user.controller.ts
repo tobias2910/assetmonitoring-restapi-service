@@ -7,7 +7,7 @@ export default class UserController {
     public async createNewUser (req: Request, res: Response, next: NextFunction): Promise <void> {
         try {
             const user = await userService.createNewUser(req.body);
-            res.status(httpStatus.CREATED).json({ message: 'Sign Up successful!'});
+            res.status(httpStatus.CREATED).json( user );
         } catch (error) {
             next(error);
         }

@@ -10,7 +10,7 @@ import roles from '../config/roles';
 })
 @pre <User> ('save', async function (next) {
     if (this.isModified('password')) {
-        this.password = await bcrypt.hash(this .password, 8);
+        this.password = await bcrypt.hash(this.password, 8);
     }
     next();
 })
@@ -52,6 +52,11 @@ export default class User {
     public password: string;
 
     @prop({
+        trim: true
+    })
+    public apiKey: string;
+
+    @prop({
             enum: roles.getRoles(),
             default: roles.getRoles()[0],
           })
@@ -85,5 +90,4 @@ export default class User {
 
         return compare;
     }
-
 }

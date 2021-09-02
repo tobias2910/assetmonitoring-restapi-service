@@ -12,7 +12,7 @@ export const swaggerDefinition = {
             },
         contact: {
             name: 'Tobias Caliskan',
-            email: 'tobiascaliskan@gmail.com'
+            email: 'asset.monitoring.api@gmail.com'
         }
     },
     servers: [

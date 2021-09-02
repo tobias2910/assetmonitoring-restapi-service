@@ -2,6 +2,7 @@ import { getModelForClass } from '@typegoose/typegoose';
 import httpStatus from 'http-status';
 import User from '../models/user.model';
 import HttpException from '../utils/httpException';
+import ApiKey from 'uuid-apikey';
 
 class UserService {
 
@@ -15,6 +16,9 @@ class UserService {
         if (await UserModel.isEmailTaken(userBody.email)) {
             throw new HttpException(httpStatus.BAD_REQUEST, 'E-Mail is already taken');
         }
+
+        const apiKey = ApiKey.create();
+        userBody.apiKey = apiKey.apiKey;
 
         const user = await UserModel.create(userBody);
         return user;
