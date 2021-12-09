@@ -11,7 +11,7 @@ export function authorizeUser (): RequestHandler {
     return (req: Request, res: Response, next: NextFunction) => {
             passport.authenticate(['jwt', 'apiKey'], {session: false}, (err, user, info) => { 
                 if (err || !user || info) {
-                    next (new httpException(httpStatus.UNAUTHORIZED, 'You are not authenticated. Please provide your bearer token OR your API key.'));
+                    next (new httpException(httpStatus.UNAUTHORIZED, 'You are not authenticated. Please provide your bearer token.'));
                 } else {
                     res.locals.userRole = user._doc.role;
                 }

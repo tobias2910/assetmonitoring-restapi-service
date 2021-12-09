@@ -60,7 +60,7 @@ export class PassportAPIKey {
     }
 
     private defineApiKeyStrategy() {
-        return new HeaderAPIKeyStrategy({header: 'X-API-Key', prefix: ''}, false, (apiKey, next) => this.apiKeyVerify(apiKey, next))
+        return new HeaderAPIKeyStrategy({header: 'X-API-Key', prefix: ''}, false, (apiKey, next) => this.apiKeyVerify(apiKey, next));
     }
 
     private async apiKeyVerify (apiKey: string, next: VerifiedCallback) {

@@ -10,11 +10,12 @@ class AssetService {
      * @param numberRecords 
      * @returns 
      */
-    public async getAssetData (query: AssetInformation, numberRecords?: number) {
+    public async getAssetData(query: AssetInformation, numberRecords?: number) {
         const AssetModel = getModelForClass(Asset);
         if (!numberRecords) {
-            numberRecords = 1000
+            numberRecords = parseInt(process.env.LIMIT_RECORDS!)
         }
+
         let records = await AssetModel.find(query).limit(numberRecords);
 
         if (records) {
@@ -33,10 +34,10 @@ class AssetService {
      * @param updateBody 
      * @returns 
      */
-    public async updateAssetData (assetName: string, updateBody: AssetInformation) {
+    public async updateAssetData(assetName: string, updateBody: AssetInformation) {
         const AssetModel = getModelForClass(Asset);
 
-        const result = await AssetModel.updateOne({Symbol: assetName}, {$set: updateBody});
+        const result = await AssetModel.updateOne({ Symbol: assetName }, { $set: updateBody });
 
         return result;
     }
@@ -46,19 +47,19 @@ class AssetService {
      * @param assetBody 
      * @returns 
      */
-    public async createAsset (assetBody: AssetInformation) {
+    public async createAsset(assetBody: AssetInformation) {
         const AssetModel = getModelForClass(Asset);
 
-        const asset = await AssetModel.findOne({Symbol: assetBody.Symbol, AssetType: assetBody.AssetType});
+        const asset = await AssetModel.findOne({ Symbol: assetBody.Symbol, AssetType: assetBody.AssetType });
         if (asset) {
-            throw new Error (`Asset '${assetBody.Symbol}' as Type ${assetBody.AssetType} already available in the database.`);
+            throw new Error(`Asset '${assetBody.Symbol}' as Type ${assetBody.AssetType} already available in the database.`);
         }
 
         let result = await AssetModel.create(assetBody);
 
         if (result) {
-                delete result._doc._id;
-                delete result._doc.__v;
+            delete result._doc._id;
+            delete result._doc.__v;
         }
 
         return result;
