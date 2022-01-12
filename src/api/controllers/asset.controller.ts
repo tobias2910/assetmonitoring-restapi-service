@@ -6,9 +6,9 @@ import Redis from '../config/redis';
 
 export default class AssetController {
 
-    public async obtainAssetData (req: Request, res: Response, next: NextFunction): Promise <void> {
+    public async obtainAssetData(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const query: AssetInformation =  {};
+            const query: AssetInformation = {};
 
             query.AssetType = req.query.assetType;
             query.Name = req.query.name;
@@ -20,8 +20,8 @@ export default class AssetController {
             let records = await Redis.getResult(redisCacheKey);
 
             if (!records) {
-                records = await assetService.getAssetData(query, parseInt(<string> req.query.numberRecords));
-                await Redis.saveResultWithTtl(redisCacheKey, records);    
+                records = await assetService.getAssetData(query, parseInt(<string>req.query.numberRecords));
+                await Redis.saveResultWithTtl(redisCacheKey, records);
             }
 
             res.status(httpStatus.OK).header('X-Total-Count', records.length).json(records);
@@ -30,25 +30,45 @@ export default class AssetController {
         }
     }
 
-    public async updateAssetData (req: Request, res: Response, next: NextFunction): Promise <void> {
+    public async searchAsset(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            await assetService.updateAssetData(<string> req.query.symbol, req.body);
+            const query = {
+                searchQuery: <string>req.query.searchQuery,
+            };
 
-            res.status(httpStatus.OK).json({Symbol: req.query.symbol, Update: req.body});
+            const redisCacheKey = `asset_query_${JSON.stringify(query)}`;
+            let records = await Redis.getResult(redisCacheKey);
+
+            if (!records) {
+                records = await assetService.searchAssetData(query);
+                await Redis.saveResultWithTtl(redisCacheKey, records);
+            }
+
+            res.status(httpStatus.OK).header('X-Total-Count', records.length).json(records);
         } catch (error) {
             next(error);
         }
     }
 
-    public async createNewAsset (req: Request, res: Response, next: NextFunction): Promise <void> {
+    public async updateAssetData(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            
+            await assetService.updateAssetData(<string>req.query.symbol, req.body);
+
+            res.status(httpStatus.OK).json({ Symbol: req.query.symbol, Update: req.body });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    public async createNewAsset(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+
             const result = await assetService.createAsset(req.body);
 
             res.status(httpStatus.CREATED).json(result);
 
         } catch (error) {
-            next (error);
+            next(error);
         }
     }
 

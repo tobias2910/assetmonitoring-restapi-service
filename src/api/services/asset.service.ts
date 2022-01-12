@@ -29,6 +29,27 @@ class AssetService {
     }
 
     /**
+   * 
+   * @param query 
+   * @param numberRecords 
+   * @returns 
+   */
+    public async searchAssetData(query: { searchQuery: string }) {
+        const AssetModel = getModelForClass(Asset);
+
+        let records = await AssetModel.find({ $text: { $search: query.searchQuery } });
+
+        if (records) {
+            records = records.map((el: any) => {
+                delete el._doc._id;
+                return el;
+            })
+        }
+
+        return records;
+    }
+
+    /**
      * 
      * @param assetName 
      * @param updateBody 

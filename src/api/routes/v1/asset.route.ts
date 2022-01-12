@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validateBodyMiddleware, validateQueryMiddleware } from "../../middleware/validationMiddleware";
-import { CreateAsset, GetAsset, UpdateAssetBody, UpdateAssetQuery } from "../../validations/asset.validation";
+import { CreateAsset, GetAsset, SearchQuery, UpdateAssetBody, UpdateAssetQuery } from "../../validations/asset.validation";
 import AssetController from "../../controllers/asset.controller";
 import { authorizeUser, validatePermissions } from "../../middleware/authMiddleware";
 import roles from '../../config/roles';
@@ -9,21 +9,21 @@ export default class AnalysisRoute {
     private router: Router;
     private readonly assetController: AssetController;
 
-    constructor () {
+    constructor() {
         this.router = Router();
         this.assetController = new AssetController();
         this.configureRouter();
     }
 
-    public getRouter (): Router {
+    public getRouter(): Router {
         return this.router;
     }
 
-    public setRouter (router: Router): void {
+    public setRouter(router: Router): void {
         this.router = router;
     }
 
-    private configureRouter (): void {
+    private configureRouter(): void {
         /**
          * @swagger
          * tags:
@@ -56,9 +56,35 @@ export default class AnalysisRoute {
          *         $ref: '#/components/responses/WrongQuery' 
          *       "401":
          *         $ref: '#/components/responses/Unauthorized'
-         */       
+         */
         this.router.get('/', authorizeUser(), validateQueryMiddleware(GetAsset), this.assetController.obtainAssetData);
-        
+
+        /**
+         * @swagger
+         * /asset/search:
+         *   get:
+         *     summary: Search for assets that matches the provided query.
+         *     tags: [Asset]
+         *     security:
+         *      - bearerAuth: []
+         *     parameters:
+         *     - $ref: '#/components/parameters/SearchQuery'
+         *     responses:
+         *       "200":
+         *         description: OK
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: array
+         *               items:
+         *                  $ref: '#/components/schemas/Asset'
+         *       "400":
+         *         $ref: '#/components/responses/WrongQuery' 
+         *       "401":
+         *         $ref: '#/components/responses/Unauthorized'
+         */
+        this.router.get('/search', authorizeUser(), validateQueryMiddleware(SearchQuery), this.assetController.searchAsset);
+
         /**
          * @swagger
          * /asset:
@@ -84,8 +110,8 @@ export default class AnalysisRoute {
          *       "401":
          *         $ref: '#/components/responses/Unauthorized'
          */
-        this.router.put('/', authorizeUser(), validatePermissions(roles.getRoles()[1]), validateQueryMiddleware(UpdateAssetQuery), validateBodyMiddleware(UpdateAssetBody),this.assetController.updateAssetData);
-        
+        this.router.put('/', authorizeUser(), validatePermissions(roles.getRoles()[1]), validateQueryMiddleware(UpdateAssetQuery), validateBodyMiddleware(UpdateAssetBody), this.assetController.updateAssetData);
+
         /**
          * @swagger
          * /asset:
