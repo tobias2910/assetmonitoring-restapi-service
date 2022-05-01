@@ -33,7 +33,7 @@ export default class User {
             trim: true,
             lowercase: true,
             validate: { 
-                validator: val => validator.isEmail(val),
+                validator: (val: string) => validator.isEmail(val),
                 message: 'Invalid email'
             }
         })
@@ -45,7 +45,7 @@ export default class User {
             minlength: 8,
             maxlength: 16,
             validate: {
-                validator: val => (val.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!_\-%*?&])[A-Za-z\d@$!_\-%*?&]{8,10}$/)),
+                validator: (val: string) => (val.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!_\-%*?&])[A-Za-z\d@$!_\-%*?&]{8,10}$/)),
                 message: 'Password must contain at least one letter and one number'
             }
          })

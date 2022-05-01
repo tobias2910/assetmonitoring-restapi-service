@@ -5,6 +5,7 @@ import AuthRouter from './auth.route';
 import PlatformRouter from './platform.route'
 import SwaggerRouter from './docs.route';
 import UserRouter from './user.route';
+import TimeSeriesRouter from './timeseries.route';
 
 export const router = Router ();
 
@@ -14,6 +15,7 @@ const assetRoute = new AssetRoute();
 const authRouter = new AuthRouter();
 const userRouter = new UserRouter();
 const platformRouter = new PlatformRouter();
+const timeSeriesRouter = new TimeSeriesRouter();
 const swaggerRouter = new SwaggerRouter();
 // Register the routers
 router.use('/analysis', analysisRoute.getRouter());
@@ -21,5 +23,6 @@ router.use('/asset', assetRoute.getRouter());
 router.use('/auth', authRouter.getRouter());
 router.use('/platform', platformRouter.getRouter());
 router.use('/user',userRouter.getRouter());
+router.use('/timeseries',timeSeriesRouter.getRouter());
 // Swagger documentation
 router.use(`/swagger`, swaggerRouter.getRouter());

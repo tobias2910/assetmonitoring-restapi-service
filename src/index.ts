@@ -9,14 +9,9 @@ let server: Server;
 
 // Connect to mongoDB and activate the server listener
 mongoose.connect(`mongodb://${ConfigData.mongoDB.url}/${ConfigData.mongoDB.database}`, {
-    auth: {
-        authSource: 'admin' 
-    },
+    authSource: 'admin',
     user: ConfigData.mongoDB.username,
     pass: ConfigData.mongoDB.password,
-    useCreateIndex: true,
-    useNewUrlParser: true,
-    useUnifiedTopology: true
 }).then(() => {
     logger.info('Connected to mongoDB');
     server = app.listen(ConfigData.port, () => {

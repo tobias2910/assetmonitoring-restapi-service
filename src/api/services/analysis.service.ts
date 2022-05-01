@@ -45,7 +45,8 @@ class AnalysisService {
           _id: {
             Symbol: "$Symbol",
             Platform: "$Platform",
-            Source: "$Source"
+            Source: "$Source",
+            AssetType: "$AssetType"
           },
           TotalSentiment: {
             $avg: "$Sentiment"
@@ -62,7 +63,8 @@ class AnalysisService {
         $group: {
           _id: {
             Symbol: "$_id.Symbol",
-            Platform: "$_id.Platform"
+            Platform: "$_id.Platform",
+            AssetType: "$AssetType"
           },
           val: {
             $addToSet: {
@@ -92,7 +94,8 @@ class AnalysisService {
       {
         $group: {
           _id: {
-            Symbol: "$_id.Symbol"
+            Symbol: "$_id.Symbol",
+            AssetType: "$AssetType"
           },
           AssetType: {
             $first: "$Document.AssetType"
@@ -171,7 +174,8 @@ class AnalysisService {
           _id: {
             Symbol: "$Symbol",
             Platform: "$Platform",
-            Source: "$Source"
+            Source: "$Source",
+            AssetType: "$AssetType"
           },
           TotalSentiment: {
             $avg: "$Sentiment"
@@ -188,7 +192,8 @@ class AnalysisService {
         $group: {
           _id: {
             Symbol: "$_id.Symbol",
-            Platform: "$_id.Platform"
+            Platform: "$_id.Platform",
+            AssetType: "$AssetType"
           },
           val: {
             $addToSet: {
@@ -218,7 +223,8 @@ class AnalysisService {
       {
         $group: {
           _id: {
-            Symbol: "$_id.Symbol"
+            Symbol: "$_id.Symbol",
+            AssetType: "$AssetType"
           },
           AssetType: {
             $first: "$Document.AssetType"

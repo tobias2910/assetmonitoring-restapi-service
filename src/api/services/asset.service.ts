@@ -79,8 +79,8 @@ class AssetService {
         let result = await AssetModel.create(assetBody);
 
         if (result) {
-            delete result._doc._id;
-            delete result._doc.__v;
+            delete result._id;
+            delete result.__v;
         }
 
         return result;
